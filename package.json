@@ -1,0 +1,17 @@
+{
+  "name": "vaaliraivo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A deployable election-night dashboard for live results, reporting and source health.",
+  "scripts": {
+    "dev": "node --watch server.mjs",
+    "start": "node server.mjs",
+    "refresh:sources": "node scripts/refresh-sources.mjs",
+    "test": "node --test",
+    "check": "node --check server.mjs && node --check lib/data-store.mjs && node --check lib/source-adapters.mjs && node --check lib/source-refresh.mjs && node --check public/js/app.js && node --check public/js/dashboard.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

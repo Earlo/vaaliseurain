@@ -1,0 +1,370 @@
+{
+  "meta": {
+    "slug": "2026-russia-state-duma",
+    "title": "State Duma 2026",
+    "location": "Russia",
+    "eyebrow": "Election night desk",
+    "phase": "voting",
+    "phaseLabel": "Voting · day 2 of 3",
+    "timezone": "Europe/Helsinki",
+    "timezoneLabel": "EEST · UTC+3",
+    "eventDate": "2026-09-20T20:00:00+03:00",
+    "lastUpdated": "2026-09-19T19:27:18+03:00",
+    "updateMode": "source-verified snapshot",
+    "nextMilestone": {
+      "at": "2026-09-20T20:00:00+03:00",
+      "label": "Moscow polls close"
+    }
+  },
+  "results": {
+    "status": "pending",
+    "statusLabel": "Counting starts after polls close",
+    "sourceId": "cec-counter",
+    "reportedAt": null,
+    "countedPercent": null,
+    "seatsTotal": 450,
+    "majoritySeats": 226,
+    "listSeats": 225,
+    "districtSeats": 225,
+    "leadingParty": null,
+    "parties": []
+  },
+  "turnout": {
+    "status": "reported",
+    "nationalPercent": 40.07,
+    "ballotsCast": null,
+    "eligibleVoters": null,
+    "reportedAt": "2026-09-19T18:27:00+03:00",
+    "sourceId": "vedomosti",
+    "note": "CEC figure reported by Vedomosti at 18:27 Moscow/Helsinki time. The percentage includes electronic voting."
+  },
+  "electronicVoting": [
+    {
+      "id": "federal-deg",
+      "name": "Federal DEG",
+      "scope": "Participating regions outside Moscow",
+      "status": "reported",
+      "statusLabel": "80% of registered users",
+      "participationPercent": 80,
+      "ballotsIssuedLabel": "Registered",
+      "ballotsReceivedLabel": "Voted",
+      "ballotsIssued": 4040000,
+      "ballotsReceived": 3230000,
+      "reportedAt": "2026-09-19T17:15:00+03:00",
+      "sourceId": "rbc"
+    },
+    {
+      "id": "moscow-deg",
+      "name": "Moscow e-voting",
+      "scope": "Moscow regional system · shown separately",
+      "status": "reported",
+      "statusLabel": "Ballots cast · no pre-registration",
+      "participationPercent": null,
+      "ballotsIssuedLabel": "Pre-registered",
+      "ballotsReceivedLabel": "Voted",
+      "ballotsIssued": null,
+      "ballotsReceived": 2600000,
+      "reportedAt": "2026-09-19T18:30:00+03:00",
+      "sourceId": "rbc"
+    }
+  ],
+  "timeline": [
+    {
+      "time": "20:00",
+      "label": "Moscow polls close",
+      "detail": "Most of European Russia finishes voting.",
+      "state": "upcoming"
+    },
+    {
+      "time": "20:30",
+      "label": "Watch-party window",
+      "detail": "Source checks and live programme begin.",
+      "state": "upcoming"
+    },
+    {
+      "time": "21:00",
+      "label": "Kaliningrad closes",
+      "detail": "Exit polls and first publishable nationwide results expected after this point.",
+      "state": "upcoming"
+    },
+    {
+      "time": "22:00",
+      "label": "Party briefings",
+      "detail": "Scheduled election-night reactions begin.",
+      "state": "upcoming"
+    }
+  ],
+  "reports": [
+    {
+      "id": "turnout-40-07",
+      "kind": "turnout",
+      "sourceId": "vedomosti",
+      "publishedAt": "2026-09-19T18:27:00+03:00",
+      "headline": "National turnout reaches 40.07%",
+      "summary": "Vedomosti reports the CEC nationwide figure as of 18:27 Moscow time; federal DEG participation was 80% at 16:34.",
+      "status": "reported",
+      "url": "https://www.vedomosti.ru/politics/news/2026/09/19/1230198-yavka-previsila-40"
+    },
+    {
+      "id": "rbc-deg-day-two",
+      "kind": "electronic voting",
+      "sourceId": "rbc",
+      "publishedAt": "2026-09-19T17:15:00+03:00",
+      "headline": "Federal DEG participation passes 80%",
+      "summary": "RBC reports 3.23 million ballots from 4.04 million registered federal-platform participants. Moscow's separate system reported 2.6 million electronic ballots.",
+      "status": "reported",
+      "url": "https://www.rbc.ru/story/57d3fbaa9a794798429622f7"
+    },
+    {
+      "id": "ap-observer-arrest",
+      "kind": "independent verification",
+      "sourceId": "ap",
+      "publishedAt": "2026-09-19T17:14:29+03:00",
+      "headline": "Yabloko observer loses consciousness during arrest, party says",
+      "summary": "AP reports the party's account from a St Petersburg polling station and notes that the observer was later charged with disobeying police orders.",
+      "status": "reported",
+      "url": "https://apnews.com/article/31a304d3156d9a066ff8001cf1338d7e"
+    },
+    {
+      "id": "cec-deg-1300",
+      "kind": "official update",
+      "sourceId": "cec-telegram",
+      "publishedAt": "2026-09-19T13:00:00+03:00",
+      "headline": "CEC says more than 3.1 million voted on the federal DEG platform",
+      "summary": "The official post says more than four million people had registered for federal remote electronic voting across 32 regions outside Moscow.",
+      "status": "reported",
+      "url": "https://t.me/cikrossii/5729"
+    },
+    {
+      "id": "public-chamber-current",
+      "kind": "official-aligned monitor",
+      "sourceId": "public-chamber",
+      "publishedAt": "2026-09-19T19:27:18+03:00",
+      "headline": "Public Chamber monitor lists two confirmed deviations",
+      "summary": "296 hotline appeals · 238 deviations reported · 2 confirmed · 129 unconfirmed · 9 resolved · 98 under review. These are the monitor's own classifications.",
+      "status": "reported",
+      "url": "https://monitoring.oprf.ru/"
+    },
+    {
+      "id": "meduza-day-one",
+      "kind": "independent report",
+      "sourceId": "meduza",
+      "publishedAt": "2026-09-18T15:02:00+03:00",
+      "headline": "Meduza tracks DEG failures, coercion claims and observer access",
+      "summary": "The updating report compiles linked accounts from the first day of voting and clearly identifies the claims and their original sources.",
+      "status": "reported",
+      "url": "https://meduza.io/en/feature/2026/09/18/russia-s-state-duma-elections-begin-with-record-online-turnout-a-million-votes-in-occupied-donetsk-and-attempts-to-bribe-observers"
+    },
+    {
+      "id": "doxa-day-one",
+      "kind": "independent report",
+      "sourceId": "doxa",
+      "publishedAt": "2026-09-18T08:57:00+03:00",
+      "headline": "DOXA reports DEG failures and observers denied access",
+      "summary": "The article attributes reports about technical queues, pressure to vote and polling-station access problems to named parties, local outlets and observers.",
+      "status": "reported",
+      "url": "https://g3nr6w6k61.execute-api.eu-central-1.amazonaws.com/news/2026-09-18-vybory-gosduma-deg-sboi-nablyudateli"
+    }
+  ],
+  "sourceHealth": [
+    {
+      "id": "cec-counter",
+      "name": "CEC result counter",
+      "shortName": "CEC results",
+      "category": "Official results",
+      "priority": "primary",
+      "status": "offline",
+      "statusLabel": "Timed out from server",
+      "latency": "Real time–minutes",
+      "integration": "Cached/manual",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": null,
+      "error": "Connection timed out after 20s",
+      "url": "https://cikrf.ru/analog/ediny-den-golosovaniya-2026/khod-golosovaniya/khod-golosovaniya.php?ID=2"
+    },
+    {
+      "id": "cec-video",
+      "name": "CEC Information Centre",
+      "shortName": "CEC live",
+      "category": "Official broadcast",
+      "priority": "primary",
+      "status": "offline",
+      "statusLabel": "Timed out from server",
+      "latency": "Live",
+      "integration": "Link/embed",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": null,
+      "error": "Connection timed out after 20s; use the VK channel fallback",
+      "url": "https://www.cikrf.ru/analog/ediny-den-golosovaniya-2026/informatsionnyy-tsentr-tsik-rossii/"
+    },
+    {
+      "id": "cec-telegram",
+      "name": "CEC Telegram",
+      "shortName": "CEC Telegram",
+      "category": "Official updates",
+      "priority": "fallback",
+      "status": "online",
+      "statusLabel": "Automatic feed live",
+      "latency": "Minutes",
+      "integration": "Automatic metadata",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": "2026-09-19T19:27:00+03:00",
+      "url": "https://t.me/s/cikrossii"
+    },
+    {
+      "id": "federal-deg",
+      "name": "Federal DEG observer portal",
+      "shortName": "Federal DEG",
+      "category": "Electronic voting",
+      "priority": "primary",
+      "status": "offline",
+      "statusLabel": "Timed out from server",
+      "latency": "Near-real time",
+      "integration": "Browser/manual",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": null,
+      "error": "Connection timed out after 20s; CEC Telegram is the numeric fallback",
+      "url": "https://stat.vybory.gov.ru/"
+    },
+    {
+      "id": "moscow-observer",
+      "name": "Moscow election observer",
+      "shortName": "Moscow DEG",
+      "category": "Electronic voting",
+      "priority": "primary",
+      "status": "check-required",
+      "statusLabel": "Browser-only source",
+      "latency": "Near-real time",
+      "integration": "Manual verification",
+      "lastSuccess": null,
+      "url": "https://observer.mos.ru/"
+    },
+    {
+      "id": "rbc",
+      "name": "RBC election coverage",
+      "shortName": "RBC",
+      "category": "Mainstream reporting",
+      "priority": "primary",
+      "status": "check-required",
+      "statusLabel": "HTTP 401 to automation",
+      "latency": "Minutes",
+      "integration": "Browser/manual",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": null,
+      "error": "Automated requests are rejected; values are entered with an article timestamp",
+      "url": "https://www.rbc.ru/story/57d3fbaa9a794798429622f7"
+    },
+    {
+      "id": "novaya",
+      "name": "Novaya Gazeta Europe",
+      "shortName": "Novaya Europe",
+      "category": "Independent reporting",
+      "priority": "primary",
+      "status": "online",
+      "statusLabel": "Automatic metadata live",
+      "latency": "Minutes",
+      "integration": "Automatic metadata",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": "2026-09-19T19:27:00+03:00",
+      "url": "https://novayagazeta.eu/elections2026/online"
+    },
+    {
+      "id": "meduza",
+      "name": "Meduza election report",
+      "shortName": "Meduza",
+      "category": "Independent reporting",
+      "priority": "primary",
+      "status": "online",
+      "statusLabel": "Automatic metadata live",
+      "latency": "Minutes–tens of minutes",
+      "integration": "Automatic metadata",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": "2026-09-19T19:27:00+03:00",
+      "url": "https://meduza.io/en/feature/2026/09/18/russia-s-state-duma-elections-begin-with-record-online-turnout-a-million-votes-in-occupied-donetsk-and-attempts-to-bribe-observers"
+    },
+    {
+      "id": "public-chamber",
+      "name": "Public Chamber monitor",
+      "shortName": "Public Chamber",
+      "category": "Official-aligned monitoring",
+      "priority": "secondary",
+      "status": "online",
+      "statusLabel": "Counters refresh automatically",
+      "latency": "Near-real time",
+      "integration": "Automatic counters/news",
+      "lastChecked": "2026-09-19T19:27:18+03:00",
+      "lastSuccess": "2026-09-19T19:27:18+03:00",
+      "url": "https://monitoring.oprf.ru/"
+    },
+    {
+      "id": "doxa",
+      "name": "DOXA election report",
+      "shortName": "DOXA",
+      "category": "Independent incidents",
+      "priority": "secondary",
+      "status": "online",
+      "statusLabel": "Automatic metadata live",
+      "latency": "Tens of minutes–hours",
+      "integration": "Automatic metadata",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": "2026-09-19T19:27:00+03:00",
+      "url": "https://g3nr6w6k61.execute-api.eu-central-1.amazonaws.com/news/2026-09-18-vybory-gosduma-deg-sboi-nablyudateli"
+    },
+    {
+      "id": "vedomosti",
+      "name": "Vedomosti election reporting",
+      "shortName": "Vedomosti",
+      "category": "Mainstream reporting",
+      "priority": "fallback",
+      "status": "online",
+      "statusLabel": "Turnout fallback verified",
+      "latency": "Minutes",
+      "integration": "Manual headline/link",
+      "lastChecked": "2026-09-19T18:31:00+03:00",
+      "lastSuccess": "2026-09-19T18:31:00+03:00",
+      "url": "https://www.vedomosti.ru/politics/news/2026/09/19/1230198-yavka-previsila-40"
+    },
+    {
+      "id": "ria-broadcast",
+      "name": "RIA Election Night marathon",
+      "shortName": "RIA live",
+      "category": "Election-night broadcast",
+      "priority": "primary",
+      "status": "online",
+      "statusLabel": "Scheduled page verified",
+      "latency": "Live from 15:00 Sunday",
+      "integration": "External player page",
+      "lastChecked": "2026-09-19T19:27:00+03:00",
+      "lastSuccess": "2026-09-19T19:27:00+03:00",
+      "url": "https://pressria.ru/20260920/959377040.html"
+    },
+    {
+      "id": "ap",
+      "name": "Associated Press",
+      "shortName": "AP",
+      "category": "International context",
+      "priority": "secondary",
+      "status": "online",
+      "statusLabel": "Current article verified",
+      "latency": "Tens of minutes–hours",
+      "integration": "Link only",
+      "lastChecked": "2026-09-19T17:20:00+03:00",
+      "lastSuccess": "2026-09-19T17:20:00+03:00",
+      "url": "https://apnews.com/article/russia-parliamentary-election-state-duma-observer-31a304d3156d9a066ff8001cf1338d7e"
+    }
+  ],
+  "broadcast": {
+    "status": "scheduled",
+    "statusLabel": "Starts Sunday at 15:00 EEST",
+    "description": "RIA's election-night marathon is scheduled from 15:00; party briefings start at 22:00. Open the source page for its published player.",
+    "primary": {
+      "name": "RIA · Election Night: Duma 2026",
+      "label": "Open scheduled RIA stream",
+      "url": "https://pressria.ru/20260920/959377040.html"
+    },
+    "fallback": {
+      "name": "CEC on VK Video",
+      "url": "https://vkvideo.ru/@cikrussia"
+    }
+  }
+}

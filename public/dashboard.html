@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ff5b36" />
+    <meta name="description" content="Live State Duma election dashboard with transparent source status." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Election desk · VaaliRaivo</title>
+  </head>
+  <body class="dashboard-page">
+    <header class="dashboard-header">
+      <a class="brand brand-compact" href="/" aria-label="Back to all election desks">
+        <span class="brand-mark">VR</span>
+        <span>VaaliRaivo</span>
+      </a>
+      <div class="dashboard-title">
+        <span id="desk-eyebrow">Election night desk</span>
+        <strong id="desk-title">Loading…</strong>
+      </div>
+      <div class="dashboard-actions">
+        <button class="icon-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen" title="Fullscreen">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5m13 5h5v-5"/></svg>
+        </button>
+        <div class="live-clock"><span id="connection-dot"></span><time id="local-clock">--:--:--</time><small>EEST</small></div>
+      </div>
+    </header>
+
+    <div id="dashboard-error" class="dashboard-error" hidden></div>
+    <main id="dashboard" class="dashboard-shell" aria-live="polite" aria-busy="true">
+      <section class="loading-state">
+        <span class="loading-spinner"></span>
+        <p>Opening election desk…</p>
+      </section>
+    </main>
+
+    <div id="source-drawer" class="source-drawer" aria-hidden="true">
+      <button class="drawer-scrim" data-close-drawer aria-label="Close source panel"></button>
+      <aside class="drawer-panel" aria-labelledby="drawer-title">
+        <div class="drawer-head">
+          <div><p class="kicker">Transparency layer</p><h2 id="drawer-title">Source monitor</h2></div>
+          <button class="icon-button" data-close-drawer aria-label="Close source panel">×</button>
+        </div>
+        <div id="source-list" class="source-list"></div>
+      </aside>
+    </div>
+
+    <script type="module" src="/js/dashboard.js"></script>
+  </body>
+</html>

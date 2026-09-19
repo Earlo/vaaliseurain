@@ -1,0 +1,18 @@
+{
+  "projects": [
+    {
+      "slug": "2026-russia-state-duma",
+      "name": "2026 State Duma election",
+      "location": "Russia",
+      "eyebrow": "Federal election",
+      "status": "live",
+      "statusLabel": "Voting now · day 2",
+      "eventDate": "2026-09-20T20:00:00+03:00",
+      "watchWindow": "20 Sep · 20:30–00:30 EEST",
+      "description": "Official results, electronic voting, source health, live reporting and election-night broadcasts in one view.",
+      "sourceCount": 13,
+      "locale": "en-FI",
+      "accent": "#ff5b36"
+    }
+  ]
+}

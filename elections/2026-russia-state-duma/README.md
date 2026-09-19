@@ -8,12 +8,14 @@ Finland.
 | Process stage | Status |
 | --- | --- |
 | 1. Create folder structure | Complete |
-| 2. Research possible sources | Complete; re-check the live URLs on 20 September |
-| 3. Build dashboard | Not started — outside the current scope and blocked on shared components |
+| 2. Research possible sources | Complete; source behavior verified on 19 September |
+| 3. Build dashboard | Live — automatic adapters, cached fallback and operator API implemented |
 
 The source evaluation and recommended launch set are in [sources.md](sources.md).
+Run the application from the repository root and open
+`/projects/2026-russia-state-duma` to use the desk.
 
-## Event facts relevant to the future view
+## Event facts relevant to the live view
 
 - Voting takes place from 18 to 20 September 2026.
 - The Duma has 450 seats: 225 party-list seats and 225 single-member district
@@ -26,6 +28,7 @@ The source evaluation and recommended launch set are in [sources.md](sources.md)
   first publishable nationwide exit polls and preliminary result reporting
   expected after 21:00.
 
-These are planning assumptions, not application code. The future view should
-show the source timestamp and retrieval status beside every live value so stale
-or unreachable official data is not presented as current.
+The dashboard shows the source timestamp and retrieval status beside every live
+value so stale or unreachable official data is not presented as current. CEC
+Telegram and Public Chamber data are refreshed automatically; inaccessible or
+browser-only sources retain explicit manual status.
