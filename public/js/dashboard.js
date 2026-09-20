@@ -14,6 +14,7 @@ let lastPayload = '';
 let activeDistrictId = null;
 let mapMarkupPromise;
 let expandedStreamKey = null;
+let hlsPlayers = [];
 
 startClock(document.querySelector('#local-clock'));
 
@@ -347,6 +348,8 @@ function renderBroadcast(broadcast) {
         const isPrimary = index === 0;
         const status = stream.status || broadcast.status;
         const embedUrl = stream.embedUrl ? safeUrl(stream.embedUrl) : '';
+        const hlsUrl = /\.m3u8(?:$|\?)/i.test(stream.url || '') ? safeUrl(stream.url) : '';
+        const hasPlayer = Boolean(embedUrl || hlsUrl);
         const description = stream.description || (isPrimary
           ? broadcast.description
           : 'Keep this backup feed ready if the main programme is interrupted.');
@@ -363,8 +366,9 @@ function renderBroadcast(broadcast) {
                 <div class="broadcast-sources">${sourceTag(stream.sourceId)}</div>
               </div>
             </div>
-            <div class="stream-preview${embedUrl ? ' has-player' : ''}">
+            <div class="stream-preview${hasPlayer ? ' has-player' : ''}">
               ${embedUrl ? `<iframe class="stream-player" src="${embedUrl}" title="${escapeHtml(stream.name)}" loading="lazy" allow="clipboard-write; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>` : ''}
+              ${hlsUrl ? `<video class="stream-player" data-hls-url="${hlsUrl}" title="${escapeHtml(stream.name)}" controls autoplay muted playsinline crossorigin="anonymous"></video>` : ''}
               <div class="stream-signal" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
             </div>
             <div class="stream-actions">
@@ -383,6 +387,39 @@ function renderBroadcast(broadcast) {
           </article>`;
       }).join('')}
     </section>`;
+}
+
+function destroyHlsPlayers() {
+  hlsPlayers.forEach((player) => player.destroy());
+  hlsPlayers = [];
+}
+
+function initializeHlsPlayers() {
+  document.querySelectorAll('video[data-hls-url]').forEach((video) => {
+    const url = video.dataset.hlsUrl;
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
+      video.play().catch(() => {});
+      return;
+    }
+
+    if (!window.Hls?.isSupported()) return;
+    const player = new window.Hls({
+      enableWorker: true,
+      lowLatencyMode: true,
+      backBufferLength: 90
+    });
+    hlsPlayers.push(player);
+    player.loadSource(url);
+    player.attachMedia(video);
+    player.on(window.Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+    player.on(window.Hls.Events.ERROR, (_event, data) => {
+      if (!data.fatal) return;
+      if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) player.startLoad();
+      else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) player.recoverMediaError();
+      else player.destroy();
+    });
+  });
 }
 
 function applyStreamExpansion() {
@@ -459,6 +496,7 @@ function render(data) {
     <div class="header-stat header-next"><small>Next · ${escapeHtml(data.meta.nextMilestone.label)}</small><strong data-live-countdown>${countdown(data.meta.nextMilestone.at)}</strong></div>
     <div class="header-stat header-updated"><small>Updated</small><strong>${formatDate(data.meta.lastUpdated)} <span>· ${escapeHtml(data.meta.updateMode)}</span></strong></div>
     ${renderSourceSummary(data.sourceHealth)}`;
+  destroyHlsPlayers();
   shell.setAttribute('aria-busy', 'false');
   shell.innerHTML = `
     <section class="dashboard-grid">
@@ -500,6 +538,7 @@ function render(data) {
 
   renderDrawer(data.sourceHealth);
   document.querySelector('#open-sources').addEventListener('click', openDrawer);
+  initializeHlsPlayers();
   bindBroadcastControls();
   bindDistrictMap();
 }

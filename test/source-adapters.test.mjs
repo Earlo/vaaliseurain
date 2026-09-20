@@ -143,7 +143,7 @@ test('source health migration replaces the blocked AP probe with AFP metadata', 
   assert.equal(source.url, 'https://www.afp.com/en/report');
 });
 
-test('broadcast migration promotes and embeds the live CEC results board', () => {
+test('broadcast migration promotes CEC and replaces the RIA page with its HLS master playlist', () => {
   const broadcast = sourceRefreshInternals.migrateBroadcast({
     primary: { url: 'https://pressria.ru/current', sourceId: 'ria-broadcast' },
     fallback: { name: 'CEC on VK Video', url: 'https://vkvideo.ru/@cikrussia', sourceId: 'cec-video' }
@@ -154,8 +154,11 @@ test('broadcast migration promotes and embeds the live CEC results board', () =>
   assert.equal(broadcast.primary.embedUrl, 'https://rutube.ru/play/embed/ecbcd4d14b222379a609bf90e36c4b19');
   assert.equal(broadcast.primary.sourceId, 'cec-video');
   assert.equal(broadcast.primary.status, 'live');
-  assert.equal(broadcast.fallback.url, 'https://pressria.ru/current');
+  assert.equal(broadcast.fallback.url, 'https://live-rian.cdnvideo.ru/rian/pressPRESIDENT/playlist.m3u8');
   assert.equal(broadcast.fallback.sourceId, 'ria-broadcast');
+  assert.equal(broadcast.fallback.integration, 'Direct HLS master playlist');
+  assert.equal(broadcast.fallback.status, 'live');
+  assert.equal(broadcast.fallback.statusLabel, 'Live now');
 });
 
 test('source health follows the resolved live-player URL', () => {

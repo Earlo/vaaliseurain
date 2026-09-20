@@ -7,6 +7,7 @@ import { startDumaSourceRefresh } from './lib/source-refresh.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const publicDirectory = join(root, 'public');
+const hlsRuntimePath = join(root, 'node_modules', 'hls.js', 'dist', 'hls.min.js');
 const port = Number(process.env.PORT || 3000);
 const host = process.env.HOST || '0.0.0.0';
 const editToken = process.env.DASHBOARD_EDIT_TOKEN || '';
@@ -70,6 +71,16 @@ async function serveStatic(pathname, response) {
   }
 }
 
+async function serveHlsRuntime(response) {
+  const details = await stat(hlsRuntimePath);
+  response.writeHead(200, {
+    'content-type': 'text/javascript; charset=utf-8',
+    'cache-control': process.env.NODE_ENV === 'production' ? 'public, max-age=86400' : 'no-cache',
+    'x-content-type-options': 'nosniff'
+  });
+  createReadStream(hlsRuntimePath).pipe(response);
+}
+
 export async function handler(request, response) {
   const url = new URL(request.url, `http://${request.headers.host || 'localhost'}`);
   const projectMatch = url.pathname.match(/^\/api\/projects\/([a-z0-9-]+)$/);
@@ -122,6 +133,10 @@ export async function handler(request, response) {
       const interval = setInterval(() => send().catch(() => response.end()), 15_000);
       request.on('close', () => clearInterval(interval));
       return;
+    }
+
+    if ((request.method === 'GET' || request.method === 'HEAD') && url.pathname === '/vendor/hls.min.js') {
+      return serveHlsRuntime(response);
     }
 
     if (request.method === 'GET' || request.method === 'HEAD') {

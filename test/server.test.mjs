@@ -77,6 +77,14 @@ test('project route serves the dashboard shell', async () => {
   assert.equal(response.statusCode, 200);
   assert.match(response.headers['content-type'], /text\/html/);
   assert.match(response.body, /id="dashboard"/);
+  assert.match(response.body, /\/vendor\/hls\.min\.js/);
+});
+
+test('serves the local HLS player runtime', async () => {
+  const response = await invoke({ url: '/vendor/hls.min.js' });
+  assert.equal(response.statusCode, 200);
+  assert.match(response.headers['content-type'], /text\/javascript/);
+  assert.match(response.body, /Hls/);
 });
 
 test('serves the 2026 constituency boundary map', async () => {
