@@ -1977,6 +1977,35 @@
       "status": "live",
       "statusLabel": "Live now",
       "integration": "Direct HLS master playlist"
-    }
+    },
+    "streams": [
+      {
+        "name": "CEC results board · Day 3",
+        "label": "Open live stream on RUTUBE",
+        "url": "https://rutube.ru/video/ecbcd4d14b222379a609bf90e36c4b19/",
+        "embedUrl": "https://rutube.ru/play/embed/ecbcd4d14b222379a609bf90e36c4b19",
+        "sourceId": "cec-video",
+        "status": "live",
+        "statusLabel": "Live now"
+      },
+      {
+        "name": "RIA · Election Night: Duma 2026",
+        "label": "Open direct HLS stream",
+        "url": "https://live-rian.cdnvideo.ru/rian/pressPRESIDENT/playlist.m3u8",
+        "sourceId": "ria-broadcast",
+        "status": "live",
+        "statusLabel": "Live now",
+        "integration": "Direct HLS master playlist"
+      },
+      {
+        "id": "youtube-election-stream",
+        "name": "Election night · YouTube live stream",
+        "label": "Open live stream on YouTube",
+        "url": "https://www.youtube.com/watch?v=7C0FTDxSIK4",
+        "embedUrl": "https://www.youtube.com/embed/7C0FTDxSIK4",
+        "status": "live",
+        "statusLabel": "Live now"
+      }
+    ]
   }
 }
