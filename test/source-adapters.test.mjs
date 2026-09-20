@@ -95,6 +95,19 @@ test('RBC RSS adapter reads the current election live report, turnout and exact 
   assert.equal(result.report.id, 'rbc-election-live');
 });
 
+test('RBC keeps the national live report when its headline changes at poll closing', () => {
+  const xml = `<rss><channel>
+    <item><title>Как идет онлайн-голосование на выборах в Госдуму. Интерактивная карта</title></item>
+    <item><title>Явка, дроны и сбой с электронными списками. Главное о выборах в Госдуму</title>
+      <link>https://www.rbc.ru/politics/election-live</link>
+      <pubDate>Sun, 20 Sep 2026 19:21:16 +0300</pubDate>
+      <rbc_news:full-text>По данным ЦИК на 19:00 мск, общая явка составляет 56,57%.</rbc_news:full-text>
+    </item>
+  </channel></rss>`;
+  assert.equal(parseRbcElectionFeed(xml).turnout.nationalPercent, 56.57);
+  assert.equal(parseRbcElectionFeed(xml).url, 'https://www.rbc.ru/politics/election-live');
+});
+
 test('metadata adapter uses Open Graph values without copying article bodies', () => {
   const html = `<html><head>
     <meta property="og:title" content="Election update &amp; context">

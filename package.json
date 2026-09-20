@@ -9,7 +9,7 @@
     "start": "node server.mjs",
     "refresh:sources": "node scripts/refresh-sources.mjs",
     "test": "node --test",
-    "check": "node --check server.mjs && node --check lib/data-store.mjs && node --check lib/source-adapters.mjs && node --check lib/source-refresh.mjs && node --check public/js/app.js && node --check public/js/dashboard.js"
+    "check": "node --check server.mjs && node --check lib/data-store.mjs && node --check lib/result-data.mjs && node --check lib/result-feed.mjs && node --check lib/source-adapters.mjs && node --check lib/source-refresh.mjs && node --check public/js/app.js && node --check public/js/dashboard.js && node --check public/js/district-results.js"
   },
   "engines": {
     "node": ">=20"

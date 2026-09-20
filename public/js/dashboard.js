@@ -1,5 +1,6 @@
 import { countdown, escapeHtml, formatDate, formatNumber, relativeTime, safeUrl, startClock } from './shared.js';
 import { districtPathIds } from './district-paths.js';
+import { districtState, renderDistrictDetail as districtDetail } from './district-results.js';
 
 const shell = document.querySelector('#dashboard');
 const errorBanner = document.querySelector('#dashboard-error');
@@ -12,9 +13,12 @@ let snapshot = null;
 let eventStream;
 let lastPayload = '';
 let activeDistrictId = null;
+let districtSearch = '';
+let districtScrollTop = 0;
 let mapMarkupPromise;
 let expandedStreamKey = null;
 let hlsPlayers = [];
+let lastBroadcastMarkup = "";
 
 startClock(document.querySelector('#local-clock'));
 
@@ -99,37 +103,7 @@ function renderTurnout(turnout) {
     <p class="panel-note">${escapeHtml(turnout.note)}</p>`;
 }
 
-function renderDistrictDetail(district) {
-  if (!district) return '<div class="district-empty">Select a constituency to inspect its tally.</div>';
-
-  const hasCount = district.countedPercent !== null && district.countedPercent !== undefined;
-  const candidates = district.results || district.candidates || [];
-  return `
-    <div class="district-detail-heading">
-      <div><span>Constituency no. ${district.id}</span><h3>${escapeHtml(district.name)}</h3><p>${escapeHtml(district.region)}</p></div>
-      <i class="status-dot ${hasCount ? 'good' : 'waiting'}"></i>
-    </div>
-    <div class="district-metrics">
-      <div><strong>${formatNumber(district.registeredVoters)}</strong><span>registered voters</span></div>
-      <div><strong>${hasCount ? `${district.countedPercent}%` : '—'}</strong><span>ballots counted</span></div>
-      <div><strong>${formatNumber(district.ballotsCounted)}</strong><span>votes tallied</span></div>
-    </div>
-    ${candidates.length ? `
-      <div class="district-party-list">
-        ${candidates.map((candidate) => `
-          <div>
-            <i style="background:${escapeHtml(candidate.color || '#717674')}"></i>
-            <span>${escapeHtml(candidate.name)}</span>
-            <b>${escapeHtml(candidate.partyShort || candidate.party || 'Independent')}</b>
-            <strong>${candidate.sharePercent === null || candidate.sharePercent === undefined ? '—' : `${candidate.sharePercent}%`}</strong>
-          </div>`).join('')}
-      </div>` : `
-      <div class="district-awaiting">
-        <span aria-hidden="true">⌁</span>
-        <div><strong>${escapeHtml(district.statusLabel || 'Awaiting constituency count')}</strong><p>Candidate tallies will appear here as verified results arrive.</p></div>
-      </div>`}
-    <p class="district-note">${escapeHtml(district.officialName)}</p>`;
-}
+const renderDistrictDetail = (district) => districtDetail(district, snapshot?.sourceHealth);
 
 function renderDistrictMap(districtResults) {
   const districts = districtResults.districts || [];
@@ -137,8 +111,8 @@ function renderDistrictMap(districtResults) {
     activeDistrictId = districts[0]?.id || null;
   }
   const selected = districts.find((district) => district.id === activeDistrictId);
-  const districtsReporting = districts.filter((district) => district.countedPercent !== null && district.countedPercent !== undefined).length;
-  const seatsCalled = districts.filter((district) => district.winner || district.status === 'final' || district.status === 'called').length;
+  const districtsReporting = districts.filter((district) => districtState(district).reporting).length;
+  const seatsCalled = districts.filter((district) => districtState(district).called).length;
 
   return `
     <article class="panel district-map-panel span-full">
@@ -150,7 +124,7 @@ function renderDistrictMap(districtResults) {
         <div class="district-map-summary">
           <div><strong>${districtsReporting} / ${districts.length}</strong><span>constituencies reporting</span></div>
           <div><strong>${seatsCalled} / ${districtResults.districtCount || '—'}</strong><span>seats called</span></div>
-          <p>${escapeHtml(districtResults.statusLabel)}</p>
+          <p>${escapeHtml(districtResults.statusLabel)}${districtResults.feed?.error ? `<br><span class="result-feed-error">Result feed unavailable · ${districtResults.feed.lastSuccess ? 'showing last received results' : 'awaiting first results'}</span>` : ''}</p>
         </div>
       </div>
       <div class="district-map-layout">
@@ -159,15 +133,15 @@ function renderDistrictMap(districtResults) {
             <div id="constituency-map" class="constituency-map"><span class="map-loading">Loading constituency map…</span></div>
             <div id="map-tooltip" class="map-tooltip" role="tooltip" hidden></div>
           </div>
-          <figcaption><span>Hover a district to identify it. Click to open its tally.</span><span>Moscow and Saint Petersburg are enlarged in the map insets.</span></figcaption>
+          <figcaption><span class="district-map-legend">Grey: awaiting · Colour: reporting / leading party</span><span>Hover a district to identify it. Click to open its tally.</span><span>Moscow and Saint Petersburg are enlarged in the map insets.</span></figcaption>
         </figure>
         <aside class="constituency-browser">
           <div id="district-detail" class="district-detail" aria-live="polite">${renderDistrictDetail(selected)}</div>
           <label class="district-search-label" for="district-search">Find a constituency</label>
-          <input id="district-search" class="district-search" type="search" placeholder="Number, name, or region" autocomplete="off" />
+          <input id="district-search" class="district-search" type="search" placeholder="Number, name, or region" autocomplete="off" value="${escapeHtml(districtSearch)}" />
           <div class="district-list-head"><span id="district-match-count">${districts.length} constituencies</span><small>2025 scheme</small></div>
           <div class="district-selector" aria-label="Choose a constituency">
-            ${districts.map((district) => `<button type="button" data-district-id="${district.id}" data-search="${escapeHtml(`${district.id} ${district.name} ${district.region}`.toLocaleLowerCase('ru'))}" class="constituency-option${district.id === activeDistrictId ? ' is-active' : ''}"><b>${district.id}</b><span>${escapeHtml(district.name)}<small>${escapeHtml(district.region)}</small></span></button>`).join('')}
+            ${districts.map((district) => `<button type="button" data-district-id="${district.id}" data-search="${escapeHtml(`${district.id} ${district.name} ${district.region}`.toLocaleLowerCase('ru'))}" aria-pressed="${district.id === activeDistrictId}" class="constituency-option${district.id === activeDistrictId ? ' is-active' : ''}"><b>${district.id}</b><span>${escapeHtml(district.name)}<small>${escapeHtml(district.region)}</small><small class="district-option-status">${districtState(district).label}${district.countedPercent == null ? '' : ` · ${district.countedPercent}% counted`}</small></span></button>`).join('')}
           </div>
         </aside>
       </div>
@@ -209,7 +183,7 @@ function positionMapTooltip(event) {
 function showMapTooltip(event, district) {
   const tooltip = document.querySelector('#map-tooltip');
   if (!tooltip) return;
-  tooltip.innerHTML = `<span>Constituency ${district.id}</span><strong>${escapeHtml(district.name)}</strong><small>${escapeHtml(district.region)}</small>`;
+  tooltip.innerHTML = `<span>Constituency ${district.id}</span><strong>${escapeHtml(district.name)}</strong><small>${escapeHtml(district.region)}</small><small>${districtState(district).label}${district.countedPercent == null ? '' : ` · ${district.countedPercent}% counted`}</small>`;
   tooltip.hidden = false;
   positionMapTooltip(event);
 }
@@ -248,6 +222,7 @@ async function hydrateDistrictMap() {
         if (!path) return;
         path.dataset.districtId = districtId;
         path.classList.add('constituency-path');
+        path.style.setProperty('--district-color', districtState(district).color);
         path.setAttribute('aria-label', `Constituency ${district.id}: ${district.name}, ${district.region}`);
         path.addEventListener('pointerenter', (event) => {
           highlightDistrict(districtId, true);
@@ -277,8 +252,9 @@ function bindDistrictMap() {
   });
   const search = document.querySelector('#district-search');
   const count = document.querySelector('#district-match-count');
-  search?.addEventListener('input', () => {
-    const query = search.value.trim().toLocaleLowerCase('ru');
+  const filterDistricts = () => {
+    districtSearch = search?.value || '';
+    const query = districtSearch.trim().toLocaleLowerCase('ru');
     let matches = 0;
     document.querySelectorAll('.constituency-option').forEach((option) => {
       const visible = !query || option.dataset.search.includes(query);
@@ -286,7 +262,11 @@ function bindDistrictMap() {
       if (visible) matches += 1;
     });
     if (count) count.textContent = `${matches} ${matches === 1 ? 'constituency' : 'constituencies'}`;
-  });
+  };
+  search?.addEventListener('input', filterDistricts);
+  filterDistricts();
+  const selector = document.querySelector('.district-selector');
+  if (selector) selector.scrollTop = districtScrollTop;
   hydrateDistrictMap();
 }
 
@@ -368,7 +348,7 @@ function renderBroadcast(broadcast) {
             </div>
             <div class="stream-preview${hasPlayer ? ' has-player' : ''}">
               ${embedUrl ? `<iframe class="stream-player" src="${embedUrl}" title="${escapeHtml(stream.name)}" loading="lazy" allow="clipboard-write; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>` : ''}
-              ${hlsUrl ? `<video class="stream-player" data-hls-url="${hlsUrl}" title="${escapeHtml(stream.name)}" controls autoplay muted playsinline crossorigin="anonymous"></video>` : ''}
+              ${hlsUrl ? `<video class="stream-player" data-hls-url="${hlsUrl}" title="${escapeHtml(stream.name)}" controls autoplay playsinline crossorigin="anonymous"></video>` : ''}
               <div class="stream-signal" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
             </div>
             <div class="stream-actions">
@@ -397,6 +377,19 @@ function destroyHlsPlayers() {
 function initializeHlsPlayers() {
   document.querySelectorAll('video[data-hls-url]').forEach((video) => {
     const url = video.dataset.hlsUrl;
+    const audioKey = `stream-audio:${video.closest('[data-stream-key]').dataset.streamKey}`;
+    try {
+      const saved = JSON.parse(localStorage.getItem(audioKey));
+      if (saved && Number.isFinite(saved.volume) && saved.volume >= 0 && saved.volume <= 1) {
+        video.volume = saved.volume;
+        video.muted = saved.muted === true;
+      }
+    } catch { /* Playback also works when storage is unavailable. */ }
+    video.addEventListener('volumechange', () => {
+      try {
+        localStorage.setItem(audioKey, JSON.stringify({ volume: video.volume, muted: video.muted }));
+      } catch { /* Keep the current settings even without persistent storage. */ }
+    });
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = url;
       video.play().catch(() => {});
@@ -487,6 +480,7 @@ function render(data) {
   const serialized = JSON.stringify(data);
   if (serialized === lastPayload) return;
   lastPayload = serialized;
+  districtScrollTop = document.querySelector('.district-selector')?.scrollTop || 0;
   snapshot = data;
   document.title = `${data.meta.title} · VaaliSeurain`;
   document.querySelector('#desk-title').textContent = data.meta.title;
@@ -496,11 +490,14 @@ function render(data) {
     <div class="header-stat header-next"><small>Next · ${escapeHtml(data.meta.nextMilestone.label)}</small><strong data-live-countdown>${countdown(data.meta.nextMilestone.at)}</strong></div>
     <div class="header-stat header-updated"><small>Updated</small><strong>${formatDate(data.meta.lastUpdated)} <span>· ${escapeHtml(data.meta.updateMode)}</span></strong></div>
     ${renderSourceSummary(data.sourceHealth)}`;
-  destroyHlsPlayers();
+  const broadcastMarkup = renderBroadcast(data.broadcast);
+  const preserveBroadcast = broadcastMarkup === lastBroadcastMarkup && shell.querySelector('[data-live-zone]');
+  if (!preserveBroadcast) destroyHlsPlayers();
+  lastBroadcastMarkup = broadcastMarkup;
   shell.setAttribute('aria-busy', 'false');
-  shell.innerHTML = `
+  const markup = `
     <section class="dashboard-grid">
-      ${renderBroadcast(data.broadcast)}
+      ${broadcastMarkup}
 
       <article class="panel results-panel">
         <header class="panel-header"><div><p class="kicker">Official count</p><h2>Seats &amp; party vote</h2></div>${sourceStamp(data.results.sourceId, data.results.reportedAt)}</header>
@@ -536,10 +533,28 @@ function render(data) {
       <a href="/">All election desks →</a>
     </footer>`;
 
+  if (preserveBroadcast) {
+    // Leave the live media attached while refreshing the rest of the dashboard.
+    const template = document.createElement('template');
+    template.innerHTML = markup;
+    const grid = shell.querySelector('.dashboard-grid');
+    [...grid.children].forEach((child) => {
+      if (!child.matches('[data-live-zone]')) child.remove();
+    });
+    [...template.content.querySelector('.dashboard-grid').children].forEach((child) => {
+      if (!child.matches('[data-live-zone]')) grid.append(child);
+    });
+    shell.querySelector('.dashboard-footer').replaceWith(template.content.querySelector('.dashboard-footer'));
+  } else {
+    shell.innerHTML = markup;
+  }
+
   renderDrawer(data.sourceHealth);
   document.querySelector('#open-sources').addEventListener('click', openDrawer);
-  initializeHlsPlayers();
-  bindBroadcastControls();
+  if (!preserveBroadcast) {
+    initializeHlsPlayers();
+    bindBroadcastControls();
+  }
   bindDistrictMap();
 }
 

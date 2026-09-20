@@ -2,7 +2,8 @@ import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getProject, listProjects, updateProject, validateUpdate } from './lib/data-store.mjs';
+import { getProject, listProjects, subscribeToProject, updateProject, validateUpdate } from './lib/data-store.mjs';
+import { maxResultPayloadBytes, ResultUpdateError } from './lib/result-data.mjs';
 import { startDumaSourceRefresh } from './lib/source-refresh.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -36,7 +37,7 @@ async function readBody(request) {
   let size = 0;
   for await (const chunk of request) {
     size += chunk.length;
-    if (size > 300_000) throw new Error('PAYLOAD_TOO_LARGE');
+    if (size > maxResultPayloadBytes) throw new Error('PAYLOAD_TOO_LARGE');
     chunks.push(chunk);
   }
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
@@ -85,6 +86,7 @@ export async function handler(request, response) {
   const url = new URL(request.url, `http://${request.headers.host || 'localhost'}`);
   const projectMatch = url.pathname.match(/^\/api\/projects\/([a-z0-9-]+)$/);
   const eventsMatch = url.pathname.match(/^\/api\/projects\/([a-z0-9-]+)\/events$/);
+  const resultsMatch = url.pathname.match(/^\/api\/projects\/([a-z0-9-]+)\/(results|districts)(?:\/(\d+))?$/);
 
   try {
     if (request.method === 'GET' && url.pathname === '/api/health') {
@@ -98,6 +100,20 @@ export async function handler(request, response) {
     if (request.method === 'GET' && projectMatch) {
       const project = await getProject(projectMatch[1]);
       return project ? json(response, 200, project) : json(response, 404, { error: 'Project not found' });
+    }
+
+    if (request.method === 'GET' && resultsMatch) {
+      const [, slug, resource, districtId] = resultsMatch;
+      const project = await getProject(slug);
+      if (!project) return json(response, 404, { error: 'Project not found' });
+      if (resource === 'results' && !districtId) {
+        return json(response, 200, { results: project.results, constituencyResults: project.constituencyResults });
+      }
+      if (resource === 'districts') {
+        if (!districtId) return json(response, 200, project.constituencyResults);
+        const district = project.constituencyResults?.districts.find((item) => item.id === Number(districtId));
+        return district ? json(response, 200, district) : json(response, 404, { error: 'District not found' });
+      }
     }
 
     if (request.method === 'PATCH' && projectMatch) {
@@ -125,13 +141,20 @@ export async function handler(request, response) {
         connection: 'keep-alive',
         'x-accel-buffering': 'no'
       });
-      const send = async () => {
-        const data = await getProject(eventsMatch[1]);
+      const send = (data) => {
+        if (response.destroyed || response.writableEnded) return;
         response.write(`event: snapshot\ndata: ${JSON.stringify(data)}\n\n`);
       };
-      await send();
-      const interval = setInterval(() => send().catch(() => response.end()), 15_000);
-      request.on('close', () => clearInterval(interval));
+      let revision = 0;
+      const unsubscribe = subscribeToProject(eventsMatch[1], (data) => { revision += 1; send(data); });
+      send(project);
+      const interval = setInterval(() => {
+        const expectedRevision = revision;
+        getProject(eventsMatch[1]).then((data) => {
+          if (revision === expectedRevision) send(data);
+        }).catch(() => response.end());
+      }, 15_000);
+      response.on('close', () => { clearInterval(interval); unsubscribe(); });
       return;
     }
 
@@ -145,6 +168,7 @@ export async function handler(request, response) {
 
     return json(response, 404, { error: 'Not found' });
   } catch (error) {
+    if (error instanceof ResultUpdateError) return json(response, error.status, { error: error.message });
     console.error(error);
     return json(response, 500, { error: 'Internal server error' });
   }

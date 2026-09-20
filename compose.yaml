@@ -9,6 +9,8 @@ services:
       DASHBOARD_EDIT_TOKEN: ${DASHBOARD_EDIT_TOKEN:-}
       SOURCE_REFRESH_ENABLED: ${SOURCE_REFRESH_ENABLED:-true}
       SOURCE_REFRESH_INTERVAL_MS: ${SOURCE_REFRESH_INTERVAL_MS:-300000}
+      RESULTS_FEED_URL: ${RESULTS_FEED_URL:-}
+      RESULTS_FEED_TOKEN: ${RESULTS_FEED_TOKEN:-}
     volumes:
       - VaaliSeurain-data:/app/runtime
     restart: unless-stopped

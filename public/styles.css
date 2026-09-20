@@ -197,9 +197,9 @@ button { color: inherit; }
 .constituency-map-stage { position: relative; display: grid; min-height: 520px; flex: 1; place-items: center; overflow: hidden; }
 .constituency-map { width: 100%; }
 .constituency-map > svg { display: block; width: 100%; height: auto; max-height: 560px; filter: drop-shadow(0 12px 20px rgba(0,0,0,.24)); }
-.constituency-map svg path.constituency-path { cursor: pointer; fill: #2b3132 !important; stroke: #0c0e0f !important; stroke-width: 3 !important; transition: fill .12s ease, filter .12s ease; }
+.constituency-map svg path.constituency-path { cursor: pointer; fill: var(--district-color, #2b3132) !important; stroke: #0c0e0f !important; stroke-width: 3 !important; transition: fill .12s ease, filter .12s ease; }
 .constituency-map svg path.constituency-path.is-hovered { fill: var(--orange-soft) !important; filter: brightness(1.08) drop-shadow(0 0 9px rgba(255,91,54,.5)); }
-.constituency-map svg path.constituency-path.is-active { fill: var(--orange) !important; stroke: #fff4ed !important; stroke-width: 5 !important; filter: drop-shadow(0 0 10px rgba(255,91,54,.72)); }
+.constituency-map svg path.constituency-path.is-active { stroke: #fff4ed !important; stroke-width: 5 !important; filter: drop-shadow(0 0 10px rgba(255,91,54,.72)); }
 .map-loading { display: block; padding: 30px; color: var(--faint); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-align: center; text-transform: uppercase; }
 .map-error { color: var(--red); }
 .map-tooltip { position: absolute; z-index: 4; top: 0; left: 0; width: max-content; max-width: min(290px, calc(100% - 24px)); padding: 11px 13px; border: 1px solid rgba(255,141,114,.55); border-radius: 9px; background: rgba(18,21,22,.96); box-shadow: 0 14px 35px rgba(0,0,0,.45); pointer-events: none; }
@@ -228,6 +228,11 @@ button { color: inherit; }
 .district-awaiting strong { font-size: 12px; }
 .district-awaiting p { margin: 4px 0 0; color: var(--faint); font-size: 10px; line-height: 1.45; }
 .district-note { margin: 13px 0 0; color: var(--faint); font-size: 9px; line-height: 1.45; }
+.district-leader { font-size: var(--dash-small, 12px); color: var(--muted); }
+.district-party-list small { display: block; margin-top: 3px; color: var(--faint); font-size: .85em; }
+.district-result-source { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 12px; font-size: var(--dash-label, 10px); color: var(--faint); }
+.district-result-source a, .constituency-option .district-option-status { color: var(--orange-soft); }
+.result-feed-error { color: var(--muted); }
 .district-empty { display: grid; min-height: 100%; place-items: center; color: var(--faint); font-size: 10px; }
 .district-search-label { margin-top: 2px; color: var(--faint); font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .district-search { width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; outline: none; background: #0e1112; color: var(--text); font-size: 11px; }
