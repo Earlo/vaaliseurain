@@ -1,6 +1,6 @@
-# VaaliRaivo
+# VaaliSeurain
 
-VaaliRaivo is a source-aware election-night dashboard designed for a large
+VaaliSeurain is a source-aware election-night dashboard designed for a large
 watch-party screen. It brings results, a geographic district map, turnout,
 electronic voting, reporting, broadcasts, the night timeline and source health
 into one view.
@@ -26,7 +26,7 @@ docker compose up --build
 ```
 
 The dashboard still starts when external sources are unavailable. Successful
-automatic refreshes and operator updates are stored in the `vaaliraivo-data`
+automatic refreshes and operator updates are stored in the `VaaliSeurain-data`
 volume.
 
 ## App structure
@@ -60,7 +60,7 @@ carry the article or retrieval time used by the operator.
 
 Set `DASHBOARD_EDIT_TOKEN` to enable `PATCH /api/projects/:slug`. Updates are
 deep-merged with the seed snapshot and persisted atomically to
-`VAALIRAIVO_DATA_DIR` (or `data/runtime` outside Docker). Only dashboard data
+`VaaliSeurain_DATA_DIR` (or `data/runtime` outside Docker). Only dashboard data
 sections are accepted.
 
 ```sh
@@ -107,4 +107,4 @@ Election workspaces live under `elections/<year>-<country>-<election>`.
 
 #### 2.3. For each source, estimate the ability for hooking it into the dashboard
 
-### 3. Using the components of VaaliRaivo, build a dashboard
+### 3. Using the components of VaaliSeurain, build a dashboard

@@ -156,6 +156,6 @@ if (isEntrypoint) {
   const { createServer } = await import('node:http');
   if (process.env.SOURCE_REFRESH_ENABLED !== 'false') startDumaSourceRefresh();
   createServer(handler).listen(port, host, () => {
-    console.log(`VaaliRaivo is running at http://${host}:${port}`);
+    console.log(`VaaliSeurain is running at http://${host}:${port}`);
   });
 }

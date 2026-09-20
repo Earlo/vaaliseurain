@@ -1,15 +1,15 @@
 # 2026 Russian State Duma election
 
-VaaliRaivo workspace for following the election of the ninth State Duma from
+VaaliSeurain workspace for following the election of the ninth State Duma from
 Finland.
 
 ## Status
 
-| Process stage | Status |
-| --- | --- |
-| 1. Create folder structure | Complete |
-| 2. Research possible sources | Complete; source behavior verified on 20 September |
-| 3. Build dashboard | Live — automatic adapters, cached fallback and operator API implemented |
+| Process stage                | Status                                                                  |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| 1. Create folder structure   | Complete                                                                |
+| 2. Research possible sources | Complete; source behavior verified on 20 September                      |
+| 3. Build dashboard           | Live — automatic adapters, cached fallback and operator API implemented |
 
 The source evaluation and recommended launch set are in [sources.md](sources.md).
 Run the application from the repository root and open

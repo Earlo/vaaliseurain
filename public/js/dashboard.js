@@ -488,7 +488,7 @@ function render(data) {
   if (serialized === lastPayload) return;
   lastPayload = serialized;
   snapshot = data;
-  document.title = `${data.meta.title} · VaaliRaivo`;
+  document.title = `${data.meta.title} · VaaliSeurain`;
   document.querySelector('#desk-title').textContent = data.meta.title;
   document.querySelector('#desk-eyebrow').textContent = data.meta.eyebrow;
   headerStatus.innerHTML = `

@@ -5,12 +5,12 @@ services:
       - "3000:3000"
     environment:
       PORT: 3000
-      VAALIRAIVO_DATA_DIR: /app/runtime
+      VaaliSeurain_DATA_DIR: /app/runtime
       DASHBOARD_EDIT_TOKEN: ${DASHBOARD_EDIT_TOKEN:-}
       SOURCE_REFRESH_ENABLED: ${SOURCE_REFRESH_ENABLED:-true}
       SOURCE_REFRESH_INTERVAL_MS: ${SOURCE_REFRESH_INTERVAL_MS:-300000}
     volumes:
-      - vaaliraivo-data:/app/runtime
+      - VaaliSeurain-data:/app/runtime
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
@@ -20,4 +20,4 @@ services:
       start_period: 5s
 
 volumes:
-  vaaliraivo-data:
+  VaaliSeurain-data:
