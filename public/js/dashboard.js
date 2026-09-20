@@ -4,6 +4,7 @@ import { districtPathIds } from './district-paths.js';
 const shell = document.querySelector('#dashboard');
 const errorBanner = document.querySelector('#dashboard-error');
 const connectionDot = document.querySelector('#connection-dot');
+const headerStatus = document.querySelector('#header-status');
 const sourceDrawer = document.querySelector('#source-drawer');
 const sourceList = document.querySelector('#source-list');
 const slug = location.pathname.split('/').filter(Boolean).at(-1);
@@ -12,6 +13,7 @@ let eventStream;
 let lastPayload = '';
 let activeDistrictId = null;
 let mapMarkupPromise;
+let expandedStreamKey = null;
 
 startClock(document.querySelector('#local-clock'));
 
@@ -79,11 +81,12 @@ function renderResults(results) {
 function renderTurnout(turnout) {
   const value = turnout.nationalPercent;
   const dash = value === null ? 0 : Math.min(100, Math.max(0, value));
+  const remainder = 100 - dash;
   return `
-    <div class="turnout-visual" style="--turnout:${dash}">
+    <div class="turnout-visual">
       <svg viewBox="0 0 120 70" role="img" aria-label="National turnout ${value === null ? 'not yet reported' : `${value} percent`}">
         <path class="gauge-base" d="M12 60a48 48 0 0 1 96 0" pathLength="100"/>
-        <path class="gauge-value" d="M12 60a48 48 0 0 1 96 0" pathLength="100"/>
+        <path class="gauge-value" d="M12 60a48 48 0 0 1 96 0" pathLength="100" stroke-dasharray="${dash} ${remainder}"/>
       </svg>
       <div><strong>${value === null ? '—' : `${value}%`}</strong><span>National turnout</span></div>
     </div>
@@ -138,14 +141,16 @@ function renderDistrictMap(districtResults) {
 
   return `
     <article class="panel district-map-panel span-full">
-      <header class="panel-header">
-        <div><p class="kicker">225 single-member seats</p><h2>Constituency map</h2></div>
-        ${sourceStamp(districtResults.sourceId, districtResults.reportedAt)}
-      </header>
-      <div class="district-map-summary">
-        <div><strong>${districtsReporting} / ${districts.length}</strong><span>constituencies reporting</span></div>
-        <div><strong>${seatsCalled} / ${districtResults.districtCount || '—'}</strong><span>seats called</span></div>
-        <p>${escapeHtml(districtResults.statusLabel)}</p>
+      <div class="district-map-topline">
+        <header class="panel-header">
+          <div><p class="kicker">225 single-member seats</p><h2>Constituency map</h2></div>
+          ${sourceStamp(districtResults.sourceId, districtResults.reportedAt)}
+        </header>
+        <div class="district-map-summary">
+          <div><strong>${districtsReporting} / ${districts.length}</strong><span>constituencies reporting</span></div>
+          <div><strong>${seatsCalled} / ${districtResults.districtCount || '—'}</strong><span>seats called</span></div>
+          <p>${escapeHtml(districtResults.statusLabel)}</p>
+        </div>
       </div>
       <div class="district-map-layout">
         <figure class="constituency-map-figure">
@@ -328,22 +333,104 @@ function renderSourceSummary(sources) {
     </button>`;
 }
 
+function getBroadcastStreams(broadcast) {
+  if (Array.isArray(broadcast.streams) && broadcast.streams.length) return broadcast.streams;
+  return [broadcast.primary, broadcast.fallback].filter(Boolean);
+}
+
 function renderBroadcast(broadcast) {
+  const streams = getBroadcastStreams(broadcast);
   return `
-    <div class="broadcast-stage">
-      <div class="broadcast-grid" aria-hidden="true"></div>
-      <div class="broadcast-play">▶</div>
-      <div class="broadcast-copy">
-        <span class="status-pill"><i></i>${escapeHtml(broadcast.statusLabel)}</span>
-        <h3>${escapeHtml(broadcast.primary.name)}</h3>
-        <p>${escapeHtml(broadcast.description || 'Open the source page to watch the programme.')}</p>
-        <div class="broadcast-sources">${sourceTag(broadcast.primary.sourceId)}${sourceTag(broadcast.fallback.sourceId)}</div>
-      </div>
-    </div>
-    <div class="broadcast-links">
-      <a href="${safeUrl(broadcast.primary.url)}" target="_blank" rel="noreferrer">${escapeHtml(broadcast.primary.label || 'Open primary stream')} <span>↗</span></a>
-      <a href="${safeUrl(broadcast.fallback.url)}" target="_blank" rel="noreferrer">Fallback: ${escapeHtml(broadcast.fallback.name)} <span>↗</span></a>
-    </div>`;
+    <section class="live-zone" data-live-zone style="--side-stream-count:${Math.max(1, streams.length - 1)}">
+      ${streams.map((stream, index) => {
+        const key = stream.id || stream.sourceId || `stream-${index + 1}`;
+        const isPrimary = index === 0;
+        const status = stream.status || broadcast.status;
+        const embedUrl = stream.embedUrl ? safeUrl(stream.embedUrl) : '';
+        const description = stream.description || (isPrimary
+          ? broadcast.description
+          : 'Keep this backup feed ready if the main programme is interrupted.');
+        return `
+          <article class="panel stream-card${isPrimary ? ' is-primary' : ''}" data-stream-key="${escapeHtml(key)}">
+            <div class="stream-card-bar">
+              <div class="stream-copy">
+                <span class="stream-role">Live · ${isPrimary ? 'Main stream' : `Stream ${index + 1}`}</span>
+                <h3>${escapeHtml(stream.name)}</h3>
+                <p>${escapeHtml(description)}</p>
+              </div>
+              <div class="stream-card-meta">
+                <span class="stream-state"><i class="status-dot ${statusClass(status)}"></i>${escapeHtml(stream.statusLabel || broadcast.statusLabel || 'Source ready')}</span>
+                <div class="broadcast-sources">${sourceTag(stream.sourceId)}</div>
+              </div>
+            </div>
+            <div class="stream-preview${embedUrl ? ' has-player' : ''}">
+              ${embedUrl ? `<iframe class="stream-player" src="${embedUrl}" title="${escapeHtml(stream.name)}" loading="lazy" allow="clipboard-write; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>` : ''}
+              <div class="stream-signal" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            </div>
+            <div class="stream-actions">
+              <a class="watch-stream-button" href="${safeUrl(stream.url)}" target="_blank" rel="noreferrer">${escapeHtml(stream.label || `Open ${stream.name}`)} <span>↗</span></a>
+              <div class="stream-view-actions">
+                <button class="expand-stream-button" type="button" data-expand-stream="${escapeHtml(key)}" aria-pressed="false" aria-label="Show ${escapeHtml(stream.name)} in theater layout">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM15 5v14"/></svg>
+                  <span>Theater</span>
+                </button>
+                <button class="fullscreen-stream-button" type="button" data-fullscreen-stream="${escapeHtml(key)}" aria-pressed="false" aria-label="Show ${escapeHtml(stream.name)} full screen">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5m13 5h5v-5"/></svg>
+                  <span>Full screen</span>
+                </button>
+              </div>
+            </div>
+          </article>`;
+      }).join('')}
+    </section>`;
+}
+
+function applyStreamExpansion() {
+  const zone = document.querySelector('[data-live-zone]');
+  if (!zone) return;
+  const cards = [...zone.querySelectorAll('[data-stream-key]')];
+  const activeCard = expandedStreamKey && cards.find((card) => card.dataset.streamKey === expandedStreamKey);
+  if (expandedStreamKey && !activeCard) expandedStreamKey = null;
+  const isExpanded = Boolean(expandedStreamKey);
+
+  zone.classList.toggle('is-theater-mode', isExpanded);
+  cards.forEach((card) => card.classList.toggle('is-theater-selected', card.dataset.streamKey === expandedStreamKey));
+  zone.querySelectorAll('[data-expand-stream]').forEach((button) => {
+    const selected = button.dataset.expandStream === expandedStreamKey;
+    button.setAttribute('aria-pressed', String(selected));
+    button.querySelector('span').textContent = selected ? 'Restore' : 'Theater';
+  });
+}
+
+function closeStreamExpansion() {
+  expandedStreamKey = null;
+  applyStreamExpansion();
+}
+
+function updateFullscreenButtons() {
+  document.querySelectorAll('[data-fullscreen-stream]').forEach((button) => {
+    const selected = document.fullscreenElement?.dataset.streamKey === button.dataset.fullscreenStream;
+    button.setAttribute('aria-pressed', String(selected));
+    button.querySelector('span').textContent = selected ? 'Exit full screen' : 'Full screen';
+  });
+}
+
+function bindBroadcastControls() {
+  document.querySelectorAll('[data-expand-stream]').forEach((button) => {
+    button.addEventListener('click', () => {
+      expandedStreamKey = expandedStreamKey === button.dataset.expandStream ? null : button.dataset.expandStream;
+      applyStreamExpansion();
+    });
+  });
+  document.querySelectorAll('[data-fullscreen-stream]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const card = button.closest('[data-stream-key]');
+      if (document.fullscreenElement === card) await document.exitFullscreen();
+      else if (card?.requestFullscreen) await card.requestFullscreen();
+    });
+  });
+  applyStreamExpansion();
+  updateFullscreenButtons();
 }
 
 function renderDrawer(sources) {
@@ -367,18 +454,17 @@ function render(data) {
   document.title = `${data.meta.title} · VaaliRaivo`;
   document.querySelector('#desk-title').textContent = data.meta.title;
   document.querySelector('#desk-eyebrow').textContent = data.meta.eyebrow;
+  headerStatus.innerHTML = `
+    <div class="header-stat header-phase"><span class="status-dot ${statusClass(data.meta.phase)}"></span><div><small>Phase</small><strong>${escapeHtml(data.meta.phaseLabel)}</strong></div></div>
+    <div class="header-stat header-next"><small>Next · ${escapeHtml(data.meta.nextMilestone.label)}</small><strong data-live-countdown>${countdown(data.meta.nextMilestone.at)}</strong></div>
+    <div class="header-stat header-updated"><small>Updated</small><strong>${formatDate(data.meta.lastUpdated)} <span>· ${escapeHtml(data.meta.updateMode)}</span></strong></div>
+    ${renderSourceSummary(data.sourceHealth)}`;
   shell.setAttribute('aria-busy', 'false');
   shell.innerHTML = `
-    <section class="desk-status-bar">
-      <div class="phase-lockup"><span class="status-dot ${statusClass(data.meta.phase)}"></span><div><small>Current phase</small><strong>${escapeHtml(data.meta.phaseLabel)}</strong></div></div>
-      <div class="status-divider"></div>
-      <div class="next-milestone"><small>Next · ${escapeHtml(data.meta.nextMilestone.label)}</small><strong data-live-countdown>${countdown(data.meta.nextMilestone.at)}</strong></div>
-      <div class="data-stamp"><small>Dataset updated</small><strong>${formatDate(data.meta.lastUpdated)} <span>· ${escapeHtml(data.meta.updateMode)}</span></strong></div>
-      ${renderSourceSummary(data.sourceHealth)}
-    </section>
-
     <section class="dashboard-grid">
-      <article class="panel results-panel span-2">
+      ${renderBroadcast(data.broadcast)}
+
+      <article class="panel results-panel">
         <header class="panel-header"><div><p class="kicker">Official count</p><h2>Seats &amp; party vote</h2></div>${sourceStamp(data.results.sourceId, data.results.reportedAt)}</header>
         ${renderResults(data.results)}
       </article>
@@ -390,24 +476,19 @@ function render(data) {
 
       ${data.constituencyResults ? renderDistrictMap(data.constituencyResults) : ''}
 
-      <article class="panel reports-panel span-2 row-2">
+      <article class="panel reports-panel">
         <header class="panel-header"><div><p class="kicker">Reporting feed</p><h2>What we know</h2></div><span class="panel-meta">Latest first</span></header>
         <div class="reports-list">${renderReports(data.reports)}</div>
-      </article>
-
-      <article class="panel broadcast-panel row-2">
-        <header class="panel-header"><div><p class="kicker">Watch live</p><h2>Election night</h2></div><span class="status-dot ${statusClass(data.broadcast.status)}"></span></header>
-        ${renderBroadcast(data.broadcast)}
-      </article>
-
-      <article class="panel evoting-panel span-2">
-        <header class="panel-header"><div><p class="kicker">Separate systems</p><h2>Electronic voting</h2></div><span class="panel-meta">Never combined</span></header>
-        <div class="evoting-grid">${renderElectronicVoting(data.electronicVoting)}</div>
       </article>
 
       <article class="panel timeline-panel">
         <header class="panel-header"><div><p class="kicker">EEST · UTC+3</p><h2>Night timeline</h2></div><span class="panel-meta">20 Sep</span></header>
         <ol class="timeline-list">${renderTimeline(data.timeline)}</ol>
+      </article>
+
+      <article class="panel evoting-panel">
+        <header class="panel-header"><div><p class="kicker">Separate systems</p><h2>Electronic voting</h2></div><span class="panel-meta">Never combined</span></header>
+        <div class="evoting-grid">${renderElectronicVoting(data.electronicVoting)}</div>
       </article>
     </section>
 
@@ -419,6 +500,7 @@ function render(data) {
 
   renderDrawer(data.sourceHealth);
   document.querySelector('#open-sources').addEventListener('click', openDrawer);
+  bindBroadcastControls();
   bindDistrictMap();
 }
 
@@ -457,8 +539,12 @@ function connect() {
 
 document.querySelectorAll('[data-close-drawer]').forEach((button) => button.addEventListener('click', closeDrawer));
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') closeDrawer();
+  if (event.key === 'Escape') {
+    closeStreamExpansion();
+    closeDrawer();
+  }
 });
+document.addEventListener('fullscreenchange', updateFullscreenButtons);
 document.querySelector('#fullscreen-button').addEventListener('click', async () => {
   if (document.fullscreenElement) await document.exitFullscreen();
   else await document.documentElement.requestFullscreen();

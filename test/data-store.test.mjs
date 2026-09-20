@@ -22,9 +22,11 @@ test('Duma project preserves the source-aware dashboard model', async () => {
   assert.equal(project.electronicVoting.length, 2);
   assert.notEqual(project.electronicVoting[0].scope, project.electronicVoting[1].scope);
   assert.ok(project.sourceHealth.some((source) => source.id === 'cec-counter'));
-  assert.equal(project.turnout.nationalPercent, 40.07);
-  assert.equal(project.electronicVoting[0].ballotsReceived, 3_300_000);
-  assert.equal(project.electronicVoting[1].ballotsReceived, 2_800_000);
+  assert.ok(project.turnout.nationalPercent > 0 && project.turnout.nationalPercent <= 100);
+  assert.ok(project.electronicVoting.every((item) => item.ballotsReceived > 0));
+  assert.equal(project.broadcast.status, 'live');
+  assert.equal(project.broadcast.primary.sourceId, 'cec-video');
+  assert.match(project.broadcast.primary.embedUrl, /^https:\/\/rutube\.ru\/play\/embed\//);
   assert.deepEqual(auditSourceUsage(project).unused, []);
   assert.deepEqual(auditSourceUsage(project).unknown, []);
   assert.ok(project.reports.every((report) => report.sourceId && report.publishedAt && report.url));

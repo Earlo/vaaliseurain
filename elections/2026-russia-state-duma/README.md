@@ -8,7 +8,7 @@ Finland.
 | Process stage | Status |
 | --- | --- |
 | 1. Create folder structure | Complete |
-| 2. Research possible sources | Complete; source behavior verified on 19 September |
+| 2. Research possible sources | Complete; source behavior verified on 20 September |
 | 3. Build dashboard | Live — automatic adapters, cached fallback and operator API implemented |
 
 The source evaluation and recommended launch set are in [sources.md](sources.md).
@@ -30,6 +30,6 @@ Run the application from the repository root and open
 
 The dashboard shows the source timestamp and retrieval status beside every live
 value so stale or unreachable official data is not presented as current. CEC
-Telegram, RBC's election RSS item and Public Chamber data are refreshed
-automatically; inaccessible or browser-only sources retain explicit manual
-status.
+Telegram, RBC's election RSS item, Public Chamber data and AFP metadata are
+refreshed automatically; inaccessible or browser-only sources retain explicit
+manual status and cached values.

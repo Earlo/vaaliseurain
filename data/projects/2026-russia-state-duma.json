@@ -5,11 +5,11 @@
     "location": "Russia",
     "eyebrow": "Election night desk",
     "phase": "voting",
-    "phaseLabel": "Voting · day 2 of 3",
+    "phaseLabel": "Voting · day 3 of 3",
     "timezone": "Europe/Helsinki",
     "timezoneLabel": "EEST · UTC+3",
     "eventDate": "2026-09-20T20:00:00+03:00",
-    "lastUpdated": "2026-09-19T23:12:00+03:00",
+    "lastUpdated": "2026-09-20T15:26:15+03:00",
     "updateMode": "source-verified snapshot",
     "nextMilestone": {
       "at": "2026-09-20T20:00:00+03:00",
@@ -1616,12 +1616,12 @@
   },
   "turnout": {
     "status": "reported",
-    "nationalPercent": 40.07,
+    "nationalPercent": 48.27,
     "ballotsCast": null,
     "eligibleVoters": null,
-    "reportedAt": "2026-09-19T18:27:00+03:00",
-    "sourceId": "vedomosti",
-    "note": "CEC figure reported by Vedomosti at 18:27 Moscow/Helsinki time. The percentage includes electronic voting."
+    "reportedAt": "2026-09-20T12:15:37+03:00",
+    "sourceId": "rbc",
+    "note": "National turnout attributed by RBC to the CEC; electronic voting is included in the reported total."
   },
   "electronicVoting": [
     {
@@ -1629,15 +1629,15 @@
       "name": "Federal DEG",
       "scope": "Participating regions outside Moscow",
       "status": "reported",
-      "statusLabel": "RBC live map · approximate counts",
-      "participationPercent": null,
+      "statusLabel": "RBC live report · attributed figures",
+      "participationPercent": 86.77,
       "ballotsIssuedLabel": "Registered",
       "ballotsReceivedLabel": "Voted",
-      "ballotsIssued": 4000000,
-      "ballotsReceived": 3300000,
-      "ballotsIssuedQualifier": ">",
+      "ballotsIssued": 4030000,
+      "ballotsReceived": 3400000,
+      "ballotsIssuedQualifier": "",
       "ballotsReceivedQualifier": ">",
-      "reportedAt": "2026-09-19T22:51:22+03:00",
+      "reportedAt": "2026-09-20T12:15:37+03:00",
       "sourceId": "rbc",
       "monitorSourceId": "federal-deg"
     },
@@ -1646,15 +1646,15 @@
       "name": "Moscow e-voting",
       "scope": "Moscow regional system · shown separately",
       "status": "reported",
-      "statusLabel": "RBC live map · approximate counts",
-      "participationPercent": null,
-      "ballotsIssuedLabel": "Eligible voters",
-      "ballotsReceivedLabel": "Voted",
-      "ballotsIssued": 7800000,
-      "ballotsReceived": 2800000,
-      "ballotsIssuedQualifier": "≈",
-      "ballotsReceivedQualifier": "≈",
-      "reportedAt": "2026-09-19T22:51:22+03:00",
+      "statusLabel": "RBC live report · attributed figures",
+      "participationPercent": 97,
+      "ballotsIssuedLabel": "Electronic ballots issued",
+      "ballotsReceivedLabel": "Electronic ballots received",
+      "ballotsIssued": 2990000,
+      "ballotsReceived": 2900000,
+      "ballotsIssuedQualifier": "",
+      "ballotsReceivedQualifier": "",
+      "reportedAt": "2026-09-20T12:15:37+03:00",
       "sourceId": "rbc",
       "monitorSourceId": "moscow-observer"
     }
@@ -1697,24 +1697,25 @@
       "url": "https://www.vedomosti.ru/politics/news/2026/09/19/1230198-yavka-previsila-40"
     },
     {
-      "id": "rbc-deg-live-map",
-      "kind": "electronic voting",
+      "id": "rbc-election-live",
+      "kind": "election live report",
       "sourceId": "rbc",
-      "publishedAt": "2026-09-19T22:51:22+03:00",
-      "headline": "How online voting is progressing in the State Duma election",
-      "summary": "RBC's live map reports more than 3.3 million federal-platform votes from just over 4 million registrations, and about 2.8 million Moscow online votes from 7.8 million eligible voters.",
+      "publishedAt": "2026-09-20T12:15:37+03:00",
+      "headline": "How the State Duma election is progressing",
+      "summary": "RBC reports CEC-attributed turnout of 48.27%, more than 3.4 million federal DEG votes from 4.03 million registrations, and 2.9 million Moscow electronic ballots received from 2.99 million issued.",
       "status": "reported",
-      "url": "https://www.rbc.ru/politics/18/09/2026/6aad53b50e440270babdf175"
+      "url": "https://www.rbc.ru/politics/18/09/2026/6aa940649a7947803fdcc142"
     },
     {
-      "id": "ap-observer-arrest",
-      "kind": "independent verification",
-      "sourceId": "ap",
-      "publishedAt": "2026-09-19T15:42:00Z",
-      "headline": "Russian election observer loses consciousness during arrest by police, opposition party says",
-      "summary": "",
+      "id": "afp-current",
+      "kind": "international context",
+      "sourceId": "afp",
+      "publishedAt": "2026-09-20T09:32:41+02:00",
+      "headline": "Russians vote on last day of parliamentary elections",
+      "summary": "AFP reports on final-day voting, its expected political effects, and criticism from opponents who reject the election's legitimacy.",
       "status": "reported",
-      "url": "https://apnews.com/article/31a304d3156d9a066ff8001cf1338d7e"
+      "url": "https://www.afp.com/en/russians-vote-last-day-parliamentary-elections",
+      "automated": true
     },
     {
       "id": "cec-deg-1300",
@@ -1789,14 +1790,14 @@
       "shortName": "CEC live",
       "category": "Official broadcast",
       "priority": "primary",
-      "status": "offline",
-      "statusLabel": "Timed out from server",
+      "status": "online",
+      "statusLabel": "Live player reachable",
       "latency": "Live",
-      "integration": "Link/embed",
-      "lastChecked": "2026-09-19T19:27:00+03:00",
-      "lastSuccess": null,
-      "error": "Connection timed out after 20s; use the VK channel fallback",
-      "url": "https://www.cikrf.ru/analog/ediny-den-golosovaniya-2026/informatsionnyy-tsentr-tsik-rossii/"
+      "integration": "Embedded RUTUBE player",
+      "lastChecked": "2026-09-20T15:26:15+03:00",
+      "lastSuccess": "2026-09-20T15:26:15+03:00",
+      "error": null,
+      "url": "https://rutube.ru/video/ecbcd4d14b222379a609bf90e36c4b19/"
     },
     {
       "id": "cec-telegram",
@@ -1850,10 +1851,10 @@
       "statusLabel": "Automatic RSS feed live",
       "latency": "Minutes",
       "integration": "Automatic RSS",
-      "lastChecked": "2026-09-19T23:12:00+03:00",
-      "lastSuccess": "2026-09-19T23:12:00+03:00",
+      "lastChecked": "2026-09-20T12:30:00+03:00",
+      "lastSuccess": "2026-09-20T12:30:00+03:00",
       "error": null,
-      "url": "https://www.rbc.ru/politics/18/09/2026/6aad53b50e440270babdf175"
+      "url": "https://www.rbc.ru/politics/18/09/2026/6aa940649a7947803fdcc142"
     },
     {
       "id": "novaya",
@@ -1940,35 +1941,41 @@
       "url": "https://pressria.ru/20260920/959377040.html"
     },
     {
-      "id": "ap",
-      "name": "Associated Press",
-      "shortName": "AP",
+      "id": "afp",
+      "name": "Agence France-Presse",
+      "shortName": "AFP",
       "category": "International context",
       "priority": "secondary",
-      "status": "stale",
-      "statusLabel": "Direct refresh blocked · indexed headline verified",
+      "status": "online",
+      "statusLabel": "Automatic metadata live",
       "latency": "Tens of minutes–hours",
-      "integration": "Link only",
-      "lastChecked": "2026-09-19T23:20:00+03:00",
-      "lastSuccess": "2026-09-19T17:20:00+03:00",
-      "error": "HTTP 403 to automated requests",
-      "url": "https://apnews.com/article/russia-parliamentary-election-state-duma-observer-31a304d3156d9a066ff8001cf1338d7e"
+      "integration": "Automatic metadata",
+      "lastChecked": "2026-09-20T12:30:00+03:00",
+      "lastSuccess": "2026-09-20T12:30:00+03:00",
+      "error": null,
+      "url": "https://www.afp.com/en/russians-vote-last-day-parliamentary-elections"
     }
   ],
   "broadcast": {
-    "status": "scheduled",
-    "statusLabel": "Starts Sunday at 15:00 EEST",
-    "description": "RIA's election-night marathon is scheduled from 15:00; party briefings start at 22:00. Open the source page for its published player.",
+    "status": "live",
+    "statusLabel": "Live now",
+    "description": "Live voting progress and preliminary results from the information board in the CEC hall.",
     "primary": {
+      "name": "CEC results board · Day 3",
+      "label": "Open live stream on RUTUBE",
+      "url": "https://rutube.ru/video/ecbcd4d14b222379a609bf90e36c4b19/",
+      "embedUrl": "https://rutube.ru/play/embed/ecbcd4d14b222379a609bf90e36c4b19",
+      "sourceId": "cec-video",
+      "status": "live",
+      "statusLabel": "Live now"
+    },
+    "fallback": {
       "name": "RIA · Election Night: Duma 2026",
       "label": "Open scheduled RIA stream",
       "url": "https://pressria.ru/20260920/959377040.html",
-      "sourceId": "ria-broadcast"
-    },
-    "fallback": {
-      "name": "CEC on VK Video",
-      "url": "https://vkvideo.ru/@cikrussia",
-      "sourceId": "cec-video"
+      "sourceId": "ria-broadcast",
+      "status": "scheduled",
+      "statusLabel": "Programme page available"
     }
   }
 }

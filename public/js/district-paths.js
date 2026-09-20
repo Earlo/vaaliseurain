@@ -1,5 +1,5 @@
 // One-to-one district-to-shape index for the 2026 constituency boundary map.
-// Unlabelled inset/legacy paths in the source SVG are intentionally omitted.
+// Water/background and inset-context paths in the source SVG are intentionally omitted.
 export const districtPathIds = Object.freeze({
   1: ["path6650"],
   2: ["path6770"],
@@ -28,7 +28,7 @@ export const districtPathIds = Object.freeze({
   25: ["path4"],
   26: ["path5"],
   27: ["path6698"],
-  28: ["path4920"],
+  28: ["path6676"],
   29: ["path6788"],
   30: ["path6684"],
   31: ["path18"],
@@ -164,10 +164,10 @@ export const districtPathIds = Object.freeze({
   161: ["path4543"],
   162: ["path4546"],
   163: ["path4537"],
-  164: ["path6676"],
+  164: ["path6680"],
   165: ["path4573"],
-  166: ["path6680"],
-  167: ["path4570"],
+  166: ["path4570"],
+  167: ["path4576"],
   168: ["path6806"],
   169: ["path17"],
   170: ["path4615"],

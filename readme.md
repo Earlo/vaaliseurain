@@ -42,9 +42,9 @@ volume.
 
 ### Election-night updates
 
-The Duma desk refreshes the public CEC Telegram page, RBC's RSS election data,
-Public Chamber counters, and metadata from the configured independent live
-pages every five minutes.
+The Duma desk refreshes the public CEC Telegram pages, RBC's RSS election data,
+Public Chamber counters, AFP metadata, and metadata from the configured
+independent live pages every five minutes.
 Source failures are isolated: the last successful snapshot remains visible and
 the source is marked stale or offline. Set `SOURCE_REFRESH_ENABLED=false` to
 disable polling, or run a one-off refresh with:
