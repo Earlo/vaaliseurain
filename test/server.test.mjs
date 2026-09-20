@@ -69,6 +69,7 @@ test('project API returns a complete snapshot', async () => {
   const body = JSON.parse(response.body);
   assert.equal(body.meta.title, 'State Duma 2026');
   assert.equal(body.sourceHealth.length, 13);
+  assert.equal(body.constituencyResults.districts.length, 225);
 });
 
 test('project route serves the dashboard shell', async () => {
@@ -76,6 +77,13 @@ test('project route serves the dashboard shell', async () => {
   assert.equal(response.statusCode, 200);
   assert.match(response.headers['content-type'], /text\/html/);
   assert.match(response.body, /id="dashboard"/);
+});
+
+test('serves the 2026 constituency boundary map', async () => {
+  const response = await invoke({ url: '/maps/2026-russia-state-duma-constituencies.svg' });
+  assert.equal(response.statusCode, 200);
+  assert.match(response.headers['content-type'], /image\/svg\+xml/);
+  assert.match(response.body, /225 constituencies established for the 2026/);
 });
 
 test('operator endpoint is closed when no token is configured', async () => {

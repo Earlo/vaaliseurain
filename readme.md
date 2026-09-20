@@ -1,8 +1,9 @@
 # VaaliRaivo
 
 VaaliRaivo is a source-aware election-night dashboard designed for a large
-watch-party screen. It brings results, turnout, electronic voting, reporting,
-broadcasts, the night timeline and source health into one view.
+watch-party screen. It brings results, a geographic district map, turnout,
+electronic voting, reporting, broadcasts, the night timeline and source health
+into one view.
 
 The app is deliberately dependency-free: Node serves the JSON API, static UI
 and a Server-Sent Events stream. It runs locally or as a small Docker service.
@@ -37,11 +38,13 @@ volume.
 - `/api/projects/:slug/events` — live Server-Sent Events stream
 - `/api/health` — deployment health check
 - `data/projects/` — version-controlled seed snapshots and source configuration
+- `public/maps/` — election boundary maps and their attribution/license files
 
 ### Election-night updates
 
-The Duma desk refreshes the public CEC Telegram page, Public Chamber counters,
-and metadata from the configured independent live pages every five minutes.
+The Duma desk refreshes the public CEC Telegram page, RBC's RSS election data,
+Public Chamber counters, and metadata from the configured independent live
+pages every five minutes.
 Source failures are isolated: the last successful snapshot remains visible and
 the source is marked stale or offline. Set `SOURCE_REFRESH_ENABLED=false` to
 disable polling, or run a one-off refresh with:
@@ -50,10 +53,10 @@ disable polling, or run a one-off refresh with:
 npm run refresh:sources
 ```
 
-CEC's result counter, the federal DEG portal, Moscow's observer portal and RBC
-do not expose a reliable server-side feed from this deployment environment.
-They therefore remain clearly labelled manual/browser sources; their values
-must carry the article or retrieval time used by the operator.
+CEC's result counter, the federal DEG portal and Moscow's observer portal do not
+expose a reliable server-side feed from this deployment environment. They
+therefore remain clearly labelled manual/browser sources; their values must
+carry the article or retrieval time used by the operator.
 
 Set `DASHBOARD_EDIT_TOKEN` to enable `PATCH /api/projects/:slug`. Updates are
 deep-merged with the seed snapshot and persisted atomically to
@@ -75,6 +78,9 @@ Keep the token server-side. The public dashboard only has read access.
 npm test
 npm run check
 ```
+
+The data-model tests reject unused or unknown source IDs and require every
+published report to include a configured source, timestamp and direct URL.
 
 For each election, there should be list of separate sources to use.
 Focus should especially be on real time sources. Streams. Immediate news sources. And official data. (Other ideas?)

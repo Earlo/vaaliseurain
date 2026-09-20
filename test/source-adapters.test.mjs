@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseCecTelegram, parsePageMetadata, parsePublicChamber } from '../lib/source-adapters.mjs';
+import { parseCecTelegram, parsePageMetadata, parsePublicChamber, parseRbcElectionFeed } from '../lib/source-adapters.mjs';
 import { sourceRefreshInternals } from '../lib/source-refresh.mjs';
 
 test('CEC Telegram adapter extracts attributed reports and explicit DEG figures', () => {
@@ -35,6 +35,30 @@ test('Public Chamber adapter extracts all eight counters and its latest claim', 
   assert.equal(result.metrics.stationsViewed, 8380);
   assert.match(result.report.summary, /238 deviations reported/);
   assert.equal(result.report.headline, 'Грубых нарушений не зафиксировано');
+});
+
+test('RBC RSS adapter keeps qualifiers and separates federal from Moscow DEG', () => {
+  const xml = `<rss><channel><item>
+    <title><![CDATA[Как идет онлайн-голосование на выборах в Госдуму. Интерактивная карта]]></title>
+    <link>https://www.rbc.ru/politics/18/09/2026/example</link>
+    <pubDate>Sat, 19 Sep 2026 22:51:19 +0300</pubDate>
+    <description><![CDATA[Последние данные по явке&nbsp;— в инфографике РБК]]></description>
+    <rbc_news:newsModifDate>Sat, 19 Sep 2026 22:51:22 +0300</rbc_news:newsModifDate>
+    <rbc_news:full-text><![CDATA[
+      Для участия в ДЭГ зарегистрировались чуть более 4 млн человек. Из них проголосовали более 3,3 млн.
+      В Москве заранее подавать заявку было не нужно: примерно 2,8 млн из 7,8 млн человек.
+    ]]></rbc_news:full-text>
+  </item></channel></rss>`;
+
+  const result = parseRbcElectionFeed(xml);
+  assert.equal(result.publishedAt, '2026-09-19T19:51:22.000Z');
+  assert.equal(result.federalDeg.ballotsIssued, 4_000_000);
+  assert.equal(result.federalDeg.ballotsReceived, 3_300_000);
+  assert.equal(result.federalDeg.ballotsReceivedQualifier, '>');
+  assert.equal(result.moscowDeg.ballotsIssued, 7_800_000);
+  assert.equal(result.moscowDeg.ballotsReceived, 2_800_000);
+  assert.equal(result.moscowDeg.ballotsReceivedQualifier, '≈');
+  assert.equal(result.report.url, 'https://www.rbc.ru/politics/18/09/2026/example');
 });
 
 test('metadata adapter uses Open Graph values without copying article bodies', () => {
